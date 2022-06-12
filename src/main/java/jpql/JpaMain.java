@@ -3,6 +3,7 @@ package jpql;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +35,25 @@ public class JpaMain {
 
             em.persist(memberB);
 
+            Product product = new Product();
+            product.setName("Sugar");
+            product.setPrice(1000);
+            product.setStockAmount(10);
+
+            em.persist(product);
+
+            Address address = new Address();
+            address.setCity("A");
+            address.setStreet("B");
+            address.setZipcode("C");
+
+            Order order = new Order();
+            order.setProduct(product);
+            order.setAddress(address);
+            order.setOrderAmount(5);
+
+            em.persist(order);
+
             em.flush();
             em.clear();
 
@@ -50,10 +70,38 @@ public class JpaMain {
 
 //            Query query3 = em.createQuery("select m.username, m.age from Member m");
 
-            Member query4SingleResult = em.createQuery("select m from Member m where m.username = :username", Member.class)
-                    .setParameter("username", "memberA")
-                    .getSingleResult();
-            System.out.println("query4SingleResult = " + query4SingleResult);
+//            Member query4SingleResult = em.createQuery("select m from Member m where m.username = :username", Member.class)
+//                    .setParameter("username", "memberA")
+//                    .getSingleResult();
+//            System.out.println("query4SingleResult = " +
+
+//            List list = em.createQuery("select o.id, o.address.city from Order o").getResultList();
+
+            /*
+            Object o = list.get(0);
+            Object[] result = (Object[]) o;
+            System.out.println("result[0] = " + result[0]);
+            System.out.println("result[0] = " + result[1]);
+
+            List<Object []> list = em.createQuery("select o.id, o.address.city from Order o").getResultList();
+            Object[] result = list.get(0);
+            System.out.println("result[0] = " + result[0]);
+            System.out.println("result[0] = " + result[1]);
+            */
+
+
+//            list.stream().forEach(od -> {
+//                System.out.println("od = " + od.g);
+//                System.out.println("id = " + od.getId() + " city = " + order.getAddress().getCity());
+//                +" street = " + order.getAddress().getStreet() + " quantity" + order.getOrderAmount());
+//            });
+
+
+            List<MemberDTO> resultList = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class).getResultList();
+
+            resultList.stream().forEach(rs -> {
+                System.out.println("rs = " + rs);
+            });
 
             /**
              * getResultList
@@ -88,3 +136,4 @@ public class JpaMain {
         emf.close();
     }
 }
+
