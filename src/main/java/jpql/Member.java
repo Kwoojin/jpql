@@ -7,6 +7,13 @@ import javax.persistence.*;
 
 @Entity
 @Getter @Setter
+/**
+ * 정적 쿼리
+ * 어플리케이션 로딩 시점에 검증하고 캐시하고 있음
+ */
+@NamedQuery(
+        name = "Member.findByUsername",
+        query = "select m from Member m where m.username = :username")
 public class Member {
 
     @Id @GeneratedValue
