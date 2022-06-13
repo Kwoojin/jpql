@@ -17,6 +17,7 @@ public class JpaMain {
         tx.begin();
 
         try{
+            /*
             Team team = new Team();
             team.setName("A");
             em.persist(team);
@@ -56,7 +57,7 @@ public class JpaMain {
 
             em.flush();
             em.clear();
-
+            */
             /**
              * TypedQuery - 반환 타입이 명확할 때
              * Query - 반환 타입이 명확하지 않을 때
@@ -97,11 +98,15 @@ public class JpaMain {
 //            });
 
 
-            List<MemberDTO> resultList = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class).getResultList();
-
-            resultList.stream().forEach(rs -> {
-                System.out.println("rs = " + rs);
-            });
+            /**
+             * 스칼라 프로젝션
+             * DTO
+             */
+//            List<MemberDTO> resultList = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class).getResultList();
+//
+//            resultList.stream().forEach(rs -> {
+//                System.out.println("rs = " + rs);
+//            });
 
             /**
              * getResultList
@@ -125,6 +130,24 @@ public class JpaMain {
             Member findMember = em.createQuery("select m from Member m WHERE m.id = 1", Member.class)
                     .getSingleResult();
              */
+
+
+            /**
+             * 페이징 쿼리
+             */
+            for(int i=20; i<=60; i++) {
+                Member newMember = new Member();
+                newMember.setUsername("member" + i);
+                newMember.setAge(i);
+
+                em.persist(newMember);
+            }
+            List<Member> resultList = em.createQuery("select m from Member m order by m.age asc", Member.class)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
+                    .getResultList();
+
+            resultList.stream().forEach(rs -> System.out.println("rs = " + rs));
 
             tx.commit();
         } catch (Exception e) {
